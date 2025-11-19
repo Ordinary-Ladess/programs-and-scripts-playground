@@ -1,0 +1,120 @@
+# !/bin/bash
+
+
+
+case $1 in
+	l)
+		intel_reg_write 0x00061254 0x60016001
+		;;
+	fan)
+		echo level $2 >/proc/acpi/ibm/fan
+		;;
+	d)
+		xset s off
+		xset -dpms
+		xset s noblank
+		;;
+	m)
+		xterm -e alsamixer -c0 &
+		;;
+	lp)
+		# Shutdown CPU 1
+		echo 14 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+		echo 13 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+
+		echo userspace >/sys/bus/cpu/devices/cpu1/cpufreq/scaling_governor
+		echo 12 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+		echo 11 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+
+		cat /sys/bus/cpu/devices/cpu1/cpufreq/scaling_min_freq  >/sys/bus/cpu/devices/cpu1/cpufreq/scaling_setspeed
+		echo 10 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+		echo 9 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+
+		echo 0 > /sys/bus/cpu/devices/cpu1/online
+		echo 8 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+		echo 7 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+
+		# Slow down CPU 0
+		echo userspace >/sys/bus/cpu/devices/cpu0/cpufreq/scaling_governor
+		echo 6 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+		echo 5 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+
+		cat /sys/bus/cpu/devices/cpu0/cpufreq/scaling_min_freq  >/sys/bus/cpu/devices/cpu0/cpufreq/scaling_setspeed
+		echo 4 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+		echo 3 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+
+		#Lower LCD Power and prevent standby
+		xset s off
+		echo 2 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+
+		xset -dpms
+		echo 1 > /sys/class/backlight/acpi_video0/brightness
+		sleep 0.1
+
+		xset s noblank
+		echo 0 > /sys/class/backlight/acpi_video0/brightness
+
+		;;
+
+	v)
+		xmessage Rebooting to Vbox Kernel.... &
+		sync
+		sleep 0.1
+		rm /boot/grub/example.cfg
+		rm /boot/grub/normalos
+		sleep 0.2
+		cp /boot/grub/vbox.cfg /boot/grub/example.cfg
+		touch /boot/grub/vbox
+		sleep 0.2
+		sync
+		sync
+		sync
+		sleep 0.5
+		xmessage reboot &
+		;;
+
+	n)
+		xmessage Rebooting to Normal Kernel.... &
+		sync
+		sleep 0.1
+		rm /boot/grub/example.cfg
+		rm /boot/grub/vbox
+		sleep 0.2
+		cp /boot/grub/normalos.cfg /boot/grub/example.cfg
+		touch /boot/grub/normalos
+		sleep 0.2
+		sync
+		sync
+		sync
+		sleep 0.5
+		xmessage reboot &
+		;;
+
+	*)
+		echo -en "Lenovo T400 control script\n\n"
+		echo -en "Usage:\n"
+		echo -en "\tt400 [option]\n\n"
+		echo -en "Options:\n"
+		echo -en "\n\tfan [speed]\n\t\tSets the fan speed from 0-7, auto and disengaged\n"
+
+		echo -en "\tv\n\t\tReboot into the VirtualBox Kernel\n"
+		echo -en "\tn\n\t\tReboot into the Normal Kernel\n"
+		echo -en "\tl\n\t\tSets the backlight function to CCFL\n"
+		echo -en "\tm\n\t\tOpen the volume mixer in a terminal\n"
+		echo -en "\td\n\t\tSets the display to stay on, good for movies.\n"
+		echo -en "\tlp\n\t\tsets the system into an agressive power save state\n"
+		;;
+esac

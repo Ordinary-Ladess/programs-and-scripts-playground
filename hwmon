@@ -1,0 +1,77 @@
+# !/bin/bash
+
+script_run()
+{
+	#initialize script
+	#prepare output
+		clear
+		echo -en "\033[s"
+		tput civis
+	#get the current battery stats at script startup and start a count varible
+	#we need this to test if the power supply (adapter/charger) has been added/removed 
+		batt_status=$(cat /sys/class/power_supply/BAT0/status)
+		batt_last=$batt_status
+		counter=0
+
+
+	#Main Loop
+		while true
+		do
+
+
+	#Clear artifacting if the charge transfer state changes
+		batt_status=$(cat /sys/class/power_supply/BAT0/status)
+		if [ "$batt_status" != "$batt_last" ]
+		then
+		   counter=10
+		   batt_last=$batt_status
+		fi
+
+		if [ $counter -gt 0 ]
+			then
+			clear
+			((counter--))
+		fi
+
+
+	#Get the data we need for battery and temperatures
+		voltage=$(cat /sys/class/power_supply/BAT0/voltage_now)
+		power_watt=$(cat /sys/class/power_supply/BAT0/power_now)
+		batt_cap=$(cat /sys/class/power_supply/BAT0/energy_full)
+		batt_remain=$(cat /sys/class/power_supply/BAT0/energy_now)
+		temperature_zone=$(cat /sys/class/thermal/thermal_zone0/temp)
+
+
+	#Calculate the current being transferred POWER=VOLTAGE*CURRENT therefore CURRENT=POWER/VOLTAGE 
+		t_amps=$(echo -e scale=2 "\n" $power_watt \/ $voltage |bc -l)
+
+	#todo add formatting calculations to display in decimals of whole units instead of milli-units
+
+	#output the info in a neat format
+		echo -en "\033[u \bCPU Temperature: \t $temperature_zone \b\b\b\b*C \nBattery Voltage: \t $voltage \b\b\b\bmV \n"
+		echo -en "Transfer Current: \t "
+		printf '%.2f' "$t_amps"
+		echo -en "A\n"
+		echo -en "Transfer Wattage: \t $power_watt \b\b\b\bmW \nCapacity: \t \t $batt_cap \b\b\b\b\b mAh\nRemaining: \t \t $batt_remain \b\b\b\b\b mAh\n\n"
+		acpi -b -i |grep charg
+		acpi -b -i |grep known
+		sleep 0.5
+
+		done
+}
+
+
+
+
+#MAIN
+#lets spawn a terminal with: 
+	case $1 in
+			run)
+			script_run
+			;;
+	*)
+		#we have to specify that we want bash to run for some odd reason
+			self=$0
+			xterm -e bash $0 run &
+			;;
+	esac
