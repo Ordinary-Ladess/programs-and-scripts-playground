@@ -5,6 +5,10 @@ Hopefully someone will find use in these little snippets. <br>
 Apart from sound-on.sh and PseudoThreading.sh the rest are from<br>
 when I was using Lenovo T400 and Dell E6400 laptops.<br>
 <br>
+Note:
+The hwmon.cpp does have "please assume latest BSD", that's because I disn't know<br>
+what license I'd release it under if I ever released it at the time<br>
+I've kept the file as is, but I give permission to use this repo's licene or to use the latest BSD license for it<br>
 <br>
 <br>
 Scripts:<br>
