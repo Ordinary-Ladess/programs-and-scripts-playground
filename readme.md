@@ -1,5 +1,4 @@
 <h1>Helpful example scripts and silly programs</h1><br>
-<br>
 Hopefully someone will find use in these little snippets. <br>
 <br>
 Apart from sound-on.sh and PseudoThreading.sh the rest are from<br>
@@ -24,8 +23,7 @@ hello.cpp - A functionally mainless hello world example that abuses old compiler
 <br>
 <br>
 <br>
-<h2>Purposes I had in mind</h2><br>
-<br>
+<h2>Purposes I had in mind</h2>
 hwmon and the C++ rewrite I made back around 2014 (shell) to 2017 (C++),<br>
 they're self explanatory, that was when similar GUI based solutions were<br>
 either not packaged, or required dependencies or other situations, so I just wrote my own solution.<br>
