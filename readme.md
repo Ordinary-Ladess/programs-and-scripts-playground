@@ -38,6 +38,9 @@ a sudo timeout reset, a self extraction, the other function does waiting and GUI
 and another could do clean-up, but I've got to figure out how to communicate between since<br>
 using vars don't seem to work for this. Files may leave a mess unless using /tmp I guess?<br>
 <br>
+Anyway, I came up with a better solution for the example of using it on a sudo-timeout case.<br>
+self-sudo-script.sh - This script does that better.
+<br>
 hell.cpp and hello.cpp are just fun experiments that don't compile on newer compilers.<br>
 <br>
 <br>
